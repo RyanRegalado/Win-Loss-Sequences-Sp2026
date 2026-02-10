@@ -1,4 +1,3 @@
-processed data here
 # Processed Data
 
 ## Soccer Data
