@@ -1,3 +1,6 @@
 Dependencies:
 
-sportsipy
+nba_api, selenium
+
+Files:
+
