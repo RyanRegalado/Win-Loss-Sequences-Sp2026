@@ -1,6 +1,4 @@
-Dependencies:
+File:
 
-nba_api, selenium
 
-Files:
 
