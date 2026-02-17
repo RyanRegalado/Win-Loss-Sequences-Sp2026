@@ -12,9 +12,6 @@ Directory Structure:
 
         - soccer_binary.csv :
             Soccer data from the first division of the English, German, and Spanish leagues from 2000 to 2024 with draws removed. Wins have been converted to a 1 point instead of 3. Losses remain 0 points. This is to help with analysis.
-        
-        - us_leagues_binomial.csv:
-            CSV including GOAT and WOAT scores.
 
     Raw:
 
