@@ -1,8 +1,8 @@
-Files:
+# Files:
 
-us_leagues_report.ipynb:
-    Top 10 GOAT/WOAT Scores
-    Graphical analysis using log scale
+- **us_leagues_report.ipynb:**
+    - Top 10 GOAT/WOAT Score
+    - Graphical analysis using log scale
 
 Soccer_GOAT_WOAT_histograms.ipynb:
     - This notebook includes the top 10 GOAT and WOAT scores across the English Premier League, Bundesliga, and La Liga
