@@ -7,5 +7,5 @@
 - scrape_nba_70s.py :
   Traverse through NBA seasons from 1968-1969 to 1982-1983 on Baseketball Reference to collect win loss sequence for each team.
 
-- scrape_mlb.py
+- scrape_mlb.py :
   Traverse through local MLB gamelogs to formulate win loss sequences in the csv file.
