@@ -1,3 +1,4 @@
 .ipynb_checkpoints/
 .DS_Store
 .rescrape_nba
+.__pycache__
