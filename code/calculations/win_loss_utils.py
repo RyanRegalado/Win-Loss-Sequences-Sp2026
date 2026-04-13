@@ -6,23 +6,57 @@ import ast
 import math
 import numpy as np
 
+
 def prob(sequence):
+    """
+    Computes the win probability of a sequence as the proportion of wins.
+
+    Parameters:
+        sequence (list): A binary win/loss sequence (1 = win, 0 = loss).
+
+    Returns:
+        float: The fraction of wins in the sequence.
+    """
     return sum(sequence) / len(sequence)
 
+
 def split(sequence):
+    """
+    Splits a sequence into two halves, with the first half taking the extra
+    game if the sequence length is odd.
 
+    Parameters:
+        sequence (list): A binary win/loss sequence.
+
+    Returns:
+        tuple: (s1, s2) where s1 is the first half and s2 is the second half.
+    """
     n1 = math.ceil(len(sequence) / 2)
+    s1 = sequence[:n1]
+    s2 = sequence[n1:]
+    return s1, s2
 
-    s1 = sequence[:n1] # includes the first n1 elements
-    s2 = sequence[n1:] # the rest of the elements
-
-    return s1,s2
-
-### Returns Model 1 metric. Sequence is type list. n2 is type int (defaults to second half).
 
 def c1(sequence, n2=None):
+    """
+    Computes the C1 collapse score using a binomial model (Method I).
+
+    Models wins as i.i.d. Bernoulli trials with probability p equal to the
+    overall win rate. Returns 1 divided by the probability of achieving k2 or
+    fewer second-half wins under this model, where a higher score indicates a
+    more extreme collapse.
+
+    Parameters:
+        sequence (list): A binary win/loss sequence.
+        n2 (int, optional): Number of end-of-season games to treat as the
+            second half. Defaults to the natural second half via split().
+
+    Returns:
+        float: The C1 collapse score. Returns inf if the binomial probability
+            is zero.
+    """
     if n2 is None:
-        _, s2 = split(sequence) 
+        _, s2 = split(sequence)
         n2 = len(s2)
         k2 = sum(s2)
     else:
@@ -37,9 +71,23 @@ def c1(sequence, n2=None):
 
     return 1 / sum_ if sum_ > 0 else float('inf')
 
-### Returns Model 2 metric. Sequence is type list. n2 is type int (defaults to second half).
-    
+
 def c2(sequence, n2=None):
+    """
+    Computes the C2 collapse score using a two-proportion z-test (Method II).
+
+    Tests whether the first-half win rate is significantly greater than the
+    second-half win rate. Returns 1 divided by the one-sided p-value, so a
+    higher score indicates a more statistically significant collapse.
+
+    Parameters:
+        sequence (list): A binary win/loss sequence.
+        n2 (int, optional): Number of end-of-season games to treat as the
+            second half. Defaults to the natural second half via split().
+
+    Returns:
+        float: The C2 collapse score. Returns inf if the p-value is zero.
+    """
     if n2 is None:
         s1, s2 = split(sequence)
         k1 = sum(s1)
@@ -53,117 +101,134 @@ def c2(sequence, n2=None):
         k2 = sum(s2)
         n1 = len(s1)
 
-    _, p = proportions_ztest([k1, k2], [n1, n2], alternative = "larger")
+    _, p = proportions_ztest([k1, k2], [n1, n2], alternative="larger")
 
-    if (p == 0):
-        return math.inf
-    else:
-        return 1 / p
-    
-def c3(sequence, N, n2=None):
+    return math.inf if p == 0 else 1 / p
 
-    sequence = np.asarray(sequence)
-    M = 0
-
-    if n2 is None:
-        _, s2 = split(sequence)
-        k2 = np.sum(s2)
-    else:
-        k2 = np.sum(sequence[len(sequence) - n2:])
-
-    for _ in range(N):
-        shuffled = np.random.permutation(sequence)
-        if n2 is None:
-            _, tmp = split(shuffled)
-        else:
-            tmp = shuffled[len(shuffled) - n2:]
-
-        if np.sum(tmp) <= k2:
-            M += 1
-
-    return N / M if M != 0 else math.inf
 
 def c1_argmax_n2(seq, n2):
-    candidates = range(1, n2 + 1)
+    """
+    Computes C1*(s) and n1*: the maximum C1 collapse score over all end-of-season
+    window sizes from 1 to n2.
 
+    Parameters:
+        seq (list): A binary win/loss sequence.
+        n2 (int): Maximum number of end-of-season games to consider.
+
+    Returns:
+        tuple: (n1_star, max_val) where n1_star is the window size achieving
+            the maximum C1 score and max_val is that score.
+    """
     n1_star = None
     max_val = -math.inf
 
-    for n in candidates:
+    for n in range(1, n2 + 1):
         val = c1(seq, n)
-
         if val > max_val:
             max_val = val
             n1_star = n
 
     return n1_star, max_val
 
-def c2_argmax_n2(seq, n2):
-    candidates = range(1, n2 + 1)
 
+def c2_argmax_n2(seq, n2):
+    """
+    Computes C2*(s) and n2*: the maximum C2 collapse score over all end-of-season
+    window sizes from 1 to n2.
+
+    Parameters:
+        seq (list): A binary win/loss sequence.
+        n2 (int): Maximum number of end-of-season games to consider.
+
+    Returns:
+        tuple: (n2_star, max_val) where n2_star is the window size achieving
+            the maximum C2 score and max_val is that score.
+    """
     n2_star = None
     max_val = -math.inf
 
-    for n in candidates:
+    for n in range(1, n2 + 1):
         val = c2(seq, n)
-
         if val > max_val:
             max_val = val
             n2_star = n
 
     return n2_star, max_val
 
-### Returns Model 3 metric. Sequence is type list. N is type int. n2 is type int (defaults to second half).
+
+def c3(sequence, N, n2=None, perms=None):
+    """
+    Computes the C3 collapse score using Monte Carlo simulation (Method III).
+
+    Generates N random permutations of the sequence and counts how many
+    produce a second-half win total <= the observed value k2. Returns N/M
+    where M is that count, so a higher score indicates a more extreme collapse.
+    A pre-generated permutation matrix can be supplied to share the same
+    random shuffles across multiple calls (e.g. within c3_argmax_n2).
+
+    Parameters:
+        sequence (array-like): A binary win/loss sequence.
+        N (int): Number of random permutations to generate.
+        n2 (int, optional): Number of end-of-season games to treat as the
+            second half. Defaults to the natural second half via split().
+        perms (np.ndarray, optional): A pre-generated (N, L) integer index
+            matrix representing N permutations. If None, a new matrix is
+            generated internally.
+
+    Returns:
+        float: The C3 collapse score. Returns inf if no permutation produced
+            a second-half win total <= k2.
+    """
+    sequence = np.asarray(sequence)
+    L = len(sequence)
+
+    if n2 is None:
+        _, s2 = split(sequence)
+        k2 = np.sum(s2)
+    else:
+        k2 = np.sum(sequence[L - n2:])
+
+    if perms is None:
+        perms = np.argsort(np.random.rand(N, L), axis=1)
+
+    tail_idx = perms[:, -n2:]
+    tail_sums = sequence[tail_idx].sum(axis=1)
+    M = np.sum(tail_sums <= k2)
+
+    return N / M if M != 0 else math.inf
 
 
 def c3_argmax_n2(seq, N):
+    """
+    Computes C3*(s) and n3*: the maximum C3 collapse score over all end-of-season
+    window sizes from 1 to n//2 (reference implementation).
+
+    Generates a single shared permutation matrix and passes it to c3 for each
+    window size, ensuring all scores are evaluated against the same set of
+    random shuffles. This is the readable reference implementation; for large
+    N or long sequences prefer c3_argmax_n2_fast.
+
+    Parameters:
+        seq (array-like): A binary win/loss sequence.
+        N (int): Number of random permutations to use.
+
+    Returns:
+        tuple: (n3_star, max_val) where n3_star is the window size achieving
+            the maximum C3 score and max_val is that score.
+    """
     seq = np.asarray(seq)
     L = len(seq)
-    n2 = L // 2
+    n2_max = L // 2
 
-    c3_vec = np.full(n2, math.inf)
-
-    for n in range(1, n2 + 1):
-        # Observed second-half sum for this split
-        k2 = np.sum(seq[L - n:])
-
-        # N random permutations, take the last n elements as the "second half"
-        idx = np.argpartition(np.random.rand(N, L), L - n, axis=1)[:, L - n:]
-        tail_sums = seq[idx].sum(axis=1)   # shape (N,)
-
-        # M = permutations with second-half sum <= observed k2
-        M = np.sum(tail_sums <= k2)
-        c3_vec[n - 1] = N / M if M != 0 else math.inf
-
-    best = int(np.argmax(c3_vec))
-    return best + 1, float(c3_vec[best])
-
-
-def c3_argmax_n2_fast(seq, N):
-    seq = np.asarray(seq)
-    L = len(seq)
-    n2 = L // 2
-
-    c3_vec = np.full(n2, math.inf)
-
-    # Generate N random permutations (rows)
     perms = np.argsort(np.random.rand(N, L), axis=1)
 
-    # Observed second-half sums for each n will be computed in loop
-    for n in range(1, n2 + 1):
-        # Observed second-half sum
-        k2 = np.sum(seq[L - n:])
+    scores = []
+    for n2 in range(1, n2_max + 1):
+        score = c3(seq, N, n2=n2, perms=perms)
+        scores.append(score)
 
-        # Row-wise indexing: take last n elements of each permutation
-        tail_idx = perms[:, -n:]              # shape (N, n)
+    best_idx = int(np.argmax(scores))
+    best_n2 = best_idx + 1
+    best_score = scores[best_idx]
 
-        # Efficient sum using indexing
-        tail_sums = seq[tail_idx].sum(axis=1)  # shape (N,)
-
-        # Count how many satisfy condition
-        M = np.sum(tail_sums <= k2)
-
-        c3_vec[n - 1] = N / M if M != 0 else math.inf
-
-    best = int(np.argmax(c3_vec))
-    return best + 1, float(c3_vec[best])
+    return best_n2, best_score
