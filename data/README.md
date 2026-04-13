@@ -1,23 +1,12 @@
-Directory Structure:
+# Data Directory
 
-    Processed: 
-        
-        Houses cleaned data for analysis and calculations:
+This directory contains raw and processed datasets used in the win-loss sequences analysis project, covering soccer and US professional leagues (NBA, MLB).
 
-        - us_leagues.csv:
-            NBA and MLB data
+## Subdirectories
 
-        - soccer.csv:
-            Soccer data of the first divisions of the English, German, and Spanish leagues from 2000 to 2024. 
+- **processed/**: Cleaned and transformed datasets ready for analysis.
+- **raw/**: Original, unprocessed data sources.
 
-        - soccer_binary.csv :
-            Soccer data from the first division of the English, German, and Spanish leagues from 2000 to 2024 with draws removed. Wins have been converted to a 1 point instead of 3. Losses remain 0 points. This is to help with analysis.
-
-    Raw:
-
-        Pre-processed data
-
-        - Matches.csv:
-            Soccer data of 27 leagues across 42 countries from 2000 to 2024. Includes details of a match such as home team, away team, full time result, year, division, yellow cards, red cards, and other variables.
+For detailed information on data sources, preprocessing steps, and file formats, refer to the README.md files in each subdirectory.
 
         -  

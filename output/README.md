@@ -1,5 +1,8 @@
 # Files:
 
+- **generalized_cscores.ipynb:** 
+    - Notebook for computing generalized collapse scores across soccer and US leagues datasets.
+
 - **us_leagues_report.ipynb:** 
     - Top 10 GOAT/WOAT Score
     - Graphical analysis using log scale
@@ -20,5 +23,10 @@
  - **n2_star_analysis.ipynb:**
     - Includes summary statistics for the n2* variable across both Soccer and US Leagues (mean, standard deviation, histograms, etc.)
     - Includes summary statistics for a new normalized n2* variable across both Soccer and US Leagues (mean, standard deviation, histograms, etc.)
+
+## Subdirectories
+
+- **csvs/**: Contains CSV files with calculated metrics and scores generated from the notebooks.
+- **figures/**: Contains PNG images of visualizations and charts produced by the analysis.
 
 

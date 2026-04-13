@@ -10,4 +10,10 @@ The initial dataset had observations for 27 countries and 42 leagues worldwide a
 - Team : The team that corresponds to the Win-Loss sequence of that season in that division.
 - Sequence : The Win-Loss sequence that corresponds to that specific team of that season. This is coded as a list in the Sequence column. The soccer.csv file contains values of 0,1, and 3 in the Sequence column. In soccer, if a team wins a match, they would be awarded 3 points. If the match ends in a draw, both teams would be awarded 1 point each. If a team loses a match, they are awarded 0 points. Hence, the Sequence column has values of 0,1, and 3. (0 = The team lost the match, 1 = the team drew the match, 3 = the team won the match).
 
-In the soccer_binary.csv, all matches that ended in a draw are removed from the dataset, and only matches where a team wins or loses are counted. In this file, a Sequence value of 1 would mean that the team won the match, and 0 would mean that the team lost the match. This soccer_binary.csv will be easier to use for win-loss streaks analysis as it contains only binary outcomes.   
+In the soccer_binary.csv, all matches that ended in a draw are removed from the dataset, and only matches where a team wins or loses are counted. In this file, a Sequence value of 1 would mean that the team won the match, and 0 would mean that the team lost the match. This soccer_binary.csv will be easier to use for win-loss streaks analysis as it contains only binary outcomes.
+
+### Dataset Shapes and Descriptions
+
+- **soccer.csv**: Contains 1430 rows and 5 columns. This dataset includes ternary win-loss-draw sequences for soccer teams in the Bundesliga, Premier League, and La Liga from 2000 to 2024, with each row representing a team's season performance.
+- **soccer_binary.csv**: Contains 1430 rows and 5 columns. This is a binary version of the soccer data, excluding draws, focusing on win-loss sequences for easier streak analysis in the same leagues and time period.
+- **us_leagues.csv**: Contains 4323 rows and 4 columns. This dataset includes binary win-loss sequences for NBA and MLB teams across various seasons, providing data for comparative analysis with soccer sequences.

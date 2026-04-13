@@ -1,11 +1,12 @@
-# File:
+# Code Directory
 
+This directory contains the analysis code for the Win-Loss Sequences project, which explores patterns in win-loss sequences across sports leagues, including European soccer and US professional leagues (NBA, MLB).
 
-- Data_Cleaning_Soccer.ipynb :
-  Notebook that includes the code used to clean the initial dataset (Matches.csv). Dataset was filtered to only include the first division in English, Germany, and Spain. As initial dataset only had a column for home team and away team, two separate dataframes had to be created - one for the home teams and one for the away teams - before we concatenated both to create a finalized dataset. 
+The code is organized into subdirectories based on functionality:
 
-- scrape_nba_70s.py :
-  Traverse through NBA seasons from 1968-1969 to 1982-1983 on Baseketball Reference to collect win loss sequence for each team.
+- **calculations/**: Jupyter notebooks for computing metrics, collapse scores, and statistical analyses.
+- **goat/**: Analysis notebooks for Greatest of All Time (GOAT) evaluations.
+- **soccer_preprocess/**: Scripts for data cleaning and preprocessing of soccer datasets.
+- **us_leagues_preprocess/**: Data retrieval, scraping, and preprocessing for US leagues.
 
-- scrape_mlb.py :
-  Traverse through local MLB gamelogs to formulate win loss sequences in the csv file.
+For detailed documentation on setup, dependencies, and specific analyses, refer to the README.md files in each subdirectory.
