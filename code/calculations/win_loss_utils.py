@@ -231,4 +231,39 @@ def c3_argmax_n2(seq, N):
     best_n2 = best_idx + 1
     best_score = scores[best_idx]
 
-    return best_n2, best_score
+    return best_n2, float(best_score)
+
+def c3_argmax_n2_fast(seq, N):
+    """
+    Computes C3*(s) and n3*: the maximum C3 collapse score over all end-of-season
+    window sizes from 1 to n//2 (optimised implementation).
+
+    Inlines the c3 logic directly and uses a single shared permutation matrix
+    across all window sizes, avoiding repeated function call overhead. Preferred
+    over c3_argmax_n2 for large N or long sequences.
+
+    Parameters:
+        seq (array-like): A binary win/loss sequence.
+        N (int): Number of random permutations to use.
+
+    Returns:
+        tuple: (n3_star, max_val) where n3_star is the window size achieving
+            the maximum C3 score and max_val is that score.
+    """
+    seq = np.asarray(seq)
+    L = len(seq)
+    n2 = L // 2
+
+    c3_vec = np.full(n2, math.inf)
+
+    perms = np.argsort(np.random.rand(N, L), axis=1)
+
+    for n in range(1, n2 + 1):
+        k2 = np.sum(seq[L - n:])
+        tail_idx = perms[:, -n:]
+        tail_sums = seq[tail_idx].sum(axis=1)
+        M = np.sum(tail_sums <= k2)
+        c3_vec[n - 1] = N / M if M != 0 else math.inf
+
+    best = int(np.argmax(c3_vec))
+    return best + 1, float(c3_vec[best])
