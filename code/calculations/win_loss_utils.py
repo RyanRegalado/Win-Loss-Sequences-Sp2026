@@ -1,10 +1,16 @@
 import pandas as pd
 from scipy.special import comb
-from scipy.stats import ttest_ind
 from statsmodels.stats.proportion import proportions_ztest
 import ast
 import math
 import numpy as np
+
+
+def make_basic(df, sport=None):
+    cols = ['league', 'season', 'team', 'sequence']
+    if sport is not None:
+        df = df[df['type'] == sport]
+    return df[cols]
 
 
 def prob(sequence):
@@ -74,7 +80,7 @@ def c1(sequence, n2=None):
 
 def c2(sequence, n2=None):
     """
-    Computes the C2 collapse score using a two-proportion z-test (Method II).
+    Computes the C2 collapse score using a one-sided two-sample t-test (Method II).
 
     Tests whether the first-half win rate is significantly greater than the
     second-half win rate. Returns 1 divided by the one-sided p-value, so a
@@ -90,19 +96,15 @@ def c2(sequence, n2=None):
     """
     if n2 is None:
         s1, s2 = split(sequence)
-        k1 = sum(s1)
-        k2 = sum(s2)
-        n1 = len(s1)
-        n2 = len(s2)
+        k1, k2 = sum(s1), sum(s2)
+        n1, n2 = len(s1), len(s2)
     else:
         s1 = sequence[:len(sequence) - n2]
         s2 = sequence[len(sequence) - n2:]
-        k1 = sum(s1)
-        k2 = sum(s2)
+        k1, k2 = sum(s1), sum(s2)
         n1 = len(s1)
 
     _, p = proportions_ztest([k1, k2], [n1, n2], alternative="larger")
-
     return math.inf if p == 0 else 1 / p
 
 
