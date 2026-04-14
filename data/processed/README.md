@@ -1,6 +1,9 @@
 # Processed Data
 
 ## Soccer Data
+
+The original datasets had several games missing for the 2003 Bundesliga season and the 2004 La Liga season. While we still include these seasons in our analysis, we will ignore these 2 seasons from any visualizations or lists that are created. 
+
 ### Dataset Structure
 The initial dataset had observations for 27 countries and 42 leagues worldwide across 2020 to 2025. The final processed csv file contains values for only three important leagues that we chose, the English Premier League in England, La Liga in Spain, and the Bundesliga in Germany. Each row corresponds to a specific team's Win-Loss Sequence for that particular season and in which league they played in. 
 
