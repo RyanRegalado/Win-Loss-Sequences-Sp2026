@@ -1,6 +1,6 @@
 import pandas as pd
 from scipy.special import comb
-from statsmodels.stats.proportion import proportions_ztest
+from scipy.stats import ttest_ind
 import ast
 import math
 import numpy as np
@@ -94,17 +94,15 @@ def c2(sequence, n2=None):
     Returns:
         float: The C2 collapse score. Returns inf if the p-value is zero.
     """
+
     if n2 is None:
         s1, s2 = split(sequence)
-        k1, k2 = sum(s1), sum(s2)
-        n1, n2 = len(s1), len(s2)
     else:
         s1 = sequence[:len(sequence) - n2]
         s2 = sequence[len(sequence) - n2:]
-        k1, k2 = sum(s1), sum(s2)
-        n1 = len(s1)
 
-    _, p = proportions_ztest([k1, k2], [n1, n2], alternative="larger")
+    _, p = ttest_ind(s1, s2, alternative="greater")
+
     return math.inf if p == 0 else 1 / p
 
 
