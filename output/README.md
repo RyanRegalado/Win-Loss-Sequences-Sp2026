@@ -24,6 +24,9 @@
     - Includes summary statistics for the n2* variable across both Soccer and US Leagues (mean, standard deviation, histograms, etc.)
     - Includes summary statistics for a new normalized n2* variable across both Soccer and US Leagues (mean, standard deviation, histograms, etc.)
 
+ - **cstar_analysis.ipynb:**
+    - Includes summary statistics for the c1*, c2*, c3* variable across both Soccer and US Leagues (mean, standard deviation, histograms, etc.)
+
 ## Subdirectories
 
 - **csvs/**: Contains CSV files with calculated metrics and scores generated from the notebooks.
